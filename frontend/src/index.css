@@ -1,12 +1,12 @@
 /* Global Styles for Case Diary System */
 
 :root {
-  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --primary-gradient: linear-gradient(135deg, #C3B091 0%, #A8926A 100%);
   --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --success-color: #00d4ff;
+  --success-color: #C3B091;
   --danger-color: #ff6b6b;
   --warning-color: #ffa502;
-  --box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  --box-shadow: 0 8px 32px 0 rgba(195, 176, 145, 0.18);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -24,7 +24,7 @@ body {
   font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #fbf7f0 0%, #e8ddcf 100%);
   min-height: 100vh;
 }
 
@@ -44,12 +44,12 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #C3B091 0%, #A8926A 100%);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  background: linear-gradient(135deg, #A8926A 0%, #C3B091 100%);
 }
 
 /* Animations */
@@ -157,7 +157,7 @@ code {
 
 .button-gradient:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+  box-shadow: 0 10px 25px rgba(195, 176, 145, 0.35);
 }
 
 .input-modern {
@@ -170,8 +170,8 @@ code {
 
 .input-modern:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: #C3B091;
+  box-shadow: 0 0 0 3px rgba(195, 176, 145, 0.15);
 }
 
 /* Loading Skeleton */

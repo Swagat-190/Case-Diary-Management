@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { 
   Grid, Card, CardContent, Typography, Button, Box, Container, 
   AppBar, Toolbar, Drawer, List, ListItem, ListItemIcon,
-  ListItemText, Divider
+  ListItemText, Divider, IconButton, Badge, Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -14,6 +14,7 @@ import FolderIcon from '@mui/icons-material/Folder';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import AnalyticsIcon from '@mui/icons-material/Analytics';
 import PeopleIcon from '@mui/icons-material/People';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 const StyledCard = styled(Card)(({ theme }) => ({
   borderRadius: '15px',
@@ -42,6 +43,9 @@ const Dashboard = () => {
   const [stats, setStats] = useState({ openCases: 0, closedCases: 0, totalCases: 0 });
   const [user, setUser] = useState(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,7 +54,45 @@ const Dashboard = () => {
       setUser(JSON.parse(userData));
     }
     fetchStats();
+    fetchUnreadNotifications();
   }, []);
+
+  const fetchUnreadNotifications = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:8080/api/notifications/unread-count', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUnreadNotifications(response.data || 0);
+    } catch (error) {
+      setUnreadNotifications(0);
+    }
+  };
+
+  const fetchNotifications = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:8080/api/notifications', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setNotifications(response.data || []);
+    } catch (error) {
+      setNotifications([]);
+    }
+  };
+
+  const markNotificationRead = async (notificationId) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(`http://localhost:8080/api/notifications/${notificationId}/read`, null, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      await fetchUnreadNotifications();
+      await fetchNotifications();
+    } catch (error) {
+      // ignore
+    }
+  };
 
   const fetchStats = async () => {
     try {
@@ -96,8 +138,8 @@ const Dashboard = () => {
       <AppBar 
         position="fixed" 
         sx={{ 
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '0 4px 20px 0 rgba(102, 126, 234, 0.3)'
+          background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
+          boxShadow: '0 4px 20px 0 rgba(195, 176, 145, 0.3)'
         }}
       >
         <Toolbar>
@@ -112,6 +154,17 @@ const Dashboard = () => {
             Case Diary System
           </Typography>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <IconButton
+              color="inherit"
+              onClick={async () => {
+                await fetchNotifications();
+                setNotificationsOpen(true);
+              }}
+            >
+              <Badge badgeContent={unreadNotifications} color="error">
+                <NotificationsIcon />
+              </Badge>
+            </IconButton>
             <Typography variant="body2">{user?.username}</Typography>
             <Button 
               color="inherit" 
@@ -130,6 +183,48 @@ const Dashboard = () => {
         </Toolbar>
       </AppBar>
 
+      <Dialog open={notificationsOpen} onClose={() => setNotificationsOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Notifications</DialogTitle>
+        <DialogContent dividers>
+          {notifications.length === 0 ? (
+            <Typography variant="body2" sx={{ color: '#666' }}>
+              No notifications.
+            </Typography>
+          ) : (
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+              {notifications.map((n) => (
+                <Box
+                  key={n.id}
+                  sx={{
+                    p: 1.5,
+                    borderRadius: '10px',
+                    border: '1px solid rgba(0,0,0,0.08)',
+                    backgroundColor: n.readAt ? 'transparent' : 'rgba(195, 176, 145, 0.12)'
+                  }}
+                >
+                  <Typography variant="body2" sx={{ fontWeight: n.readAt ? 500 : 700 }}>
+                    {n.message}
+                  </Typography>
+                  <Typography variant="caption" sx={{ color: '#666' }}>
+                    {n.createdAt ? new Date(n.createdAt).toLocaleString() : ''}
+                  </Typography>
+                  {!n.readAt && (
+                    <Box sx={{ mt: 1 }}>
+                      <Button size="small" variant="outlined" onClick={() => markNotificationRead(n.id)} sx={{ textTransform: 'none' }}>
+                        Mark as read
+                      </Button>
+                    </Box>
+                  )}
+                </Box>
+              ))}
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setNotificationsOpen(false)} sx={{ textTransform: 'none' }}>Close</Button>
+        </DialogActions>
+      </Dialog>
+
       {/* Sidebar Drawer */}
       <Drawer 
         anchor="left" 
@@ -139,7 +234,7 @@ const Dashboard = () => {
         <Box sx={{ width: 250, pt: 2 }}>
           <Typography 
             variant="h6" 
-            sx={{ px: 2, mb: 2, fontWeight: 'bold', color: '#667eea' }}
+            sx={{ px: 2, mb: 2, fontWeight: 'bold', color: '#C3B091' }}
           >
             Navigation
           </Typography>
@@ -159,7 +254,7 @@ const Dashboard = () => {
                   }
                 }}
               >
-                <ListItemIcon sx={{ color: '#667eea' }}>
+                <ListItemIcon sx={{ color: '#C3B091' }}>
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText primary={item.label} />
@@ -187,7 +282,7 @@ const Dashboard = () => {
               sx={{ 
                 fontWeight: 'bold', 
                 mb: 1,
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent'
@@ -203,7 +298,7 @@ const Dashboard = () => {
           {/* Statistics Grid */}
           <Grid container spacing={3} sx={{ mb: 4 }}>
             <Grid item xs={12} sm={6} md={4}>
-              <StatCard color="#667eea">
+              <StatCard color="#C3B091">
                 <CardContent>
                   <Box sx={{ textAlign: 'center' }}>
                     <Typography variant="h6" sx={{ color: '#666', mb: 1 }}>
@@ -217,7 +312,7 @@ const Dashboard = () => {
               </StatCard>
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-              <StatCard color="#f093fb">
+              <StatCard color="#A8926A">
                 <CardContent>
                   <Box sx={{ textAlign: 'center' }}>
                     <Typography variant="h6" sx={{ color: '#666', mb: 1 }}>
@@ -231,7 +326,7 @@ const Dashboard = () => {
               </StatCard>
             </Grid>
             <Grid item xs={12} sm={6} md={4}>
-              <StatCard color="#4facfe">
+              <StatCard color="#BFA57D">
                 <CardContent>
                   <Box sx={{ textAlign: 'center' }}>
                     <Typography variant="h6" sx={{ color: '#666', mb: 1 }}>

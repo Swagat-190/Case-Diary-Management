@@ -28,7 +28,7 @@ const Login = () => {
     username: '',
     password: '',
     email: '',
-    role: 'IO',
+    role: 'SUPERVISOR',
     policeStation: '',
     designation: ''
   });
@@ -50,7 +50,7 @@ const Login = () => {
         username: '',
         password: '',
         email: '',
-        role: 'IO',
+        role: 'SUPERVISOR',
         policeStation: '',
         designation: ''
       });
@@ -93,7 +93,7 @@ const Login = () => {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+        background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
         padding: '20px'
       }}
     >
@@ -104,7 +104,7 @@ const Login = () => {
               variant="h3" 
               sx={{ 
                 fontWeight: 'bold', 
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
                 backgroundClip: 'text',
                 WebkitBackgroundClip: 'text',
                 WebkitTextFillColor: 'transparent',
@@ -134,7 +134,7 @@ const Login = () => {
               mb: 3, 
               borderBottom: '1px solid #eee',
               '& .MuiTabs-indicator': {
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)'
               }
             }}
           >
@@ -181,19 +181,6 @@ const Login = () => {
                   variant="outlined"
                   size="small"
                 />
-                <FormControl fullWidth margin="normal" size="small" required>
-                  <InputLabel>Role</InputLabel>
-                  <Select
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    label="Role"
-                  >
-                    <MenuItem value="IO">Investigating Officer</MenuItem>
-                    <MenuItem value="SUPERVISOR">Supervisor</MenuItem>
-                    <MenuItem value="ADMIN">Admin</MenuItem>
-                  </Select>
-                </FormControl>
                 <TextField
                   fullWidth
                   label="Police Station"
@@ -227,15 +214,15 @@ const Login = () => {
               sx={{ 
                 mt: 3, 
                 mb: 2,
-                background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
                 padding: '12px',
                 fontSize: '16px',
                 fontWeight: 'bold',
                 borderRadius: '8px',
                 '&:hover': {
-                  background: 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)',
+                  background: 'linear-gradient(135deg, #A8926A 0%, #C3B091 100%)',
                   transform: 'translateY(-2px)',
-                  boxShadow: '0 10px 25px rgba(102, 126, 234, 0.4)'
+                  boxShadow: '0 10px 25px rgba(195, 176, 145, 0.35)'
                 }
               }}
             >

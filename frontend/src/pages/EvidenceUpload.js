@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Paper, Typography, Grid, LinearProgress, Box, AppBar, Toolbar } from '@mui/material';
+import { Button, Paper, Typography, Grid, LinearProgress, Box, AppBar, Toolbar, TextField, MenuItem } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import axios from 'axios';
 
@@ -13,6 +13,14 @@ const EvidenceUpload = () => {
     evidenceType: 'PHOTO',
     description: ''
   });
+
+  const evidenceTypes = [
+    { value: 'PHOTO', label: 'Photo / Image' },
+    { value: 'VIDEO', label: 'Video' },
+    { value: 'AUDIO', label: 'Audio' },
+    { value: 'DOCUMENT', label: 'Document' },
+    { value: 'FORENSIC_REPORT', label: 'Forensic Report' }
+  ];
 
   const handleFileChange = (e) => {
     setSelectedFile(e.target.files[0]);
@@ -60,8 +68,8 @@ const EvidenceUpload = () => {
       <AppBar 
         position="static" 
         sx={{ 
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '0 4px 20px 0 rgba(102, 126, 234, 0.3)'
+          background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
+          boxShadow: '0 4px 20px 0 rgba(195, 176, 145, 0.3)'
         }}
       >
         <Toolbar>
@@ -85,7 +93,7 @@ const EvidenceUpload = () => {
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <input
-                accept="image/*,video/*,.pdf,.doc,.docx"
+                accept="image/*,video/*,audio/*,.pdf,.doc,.docx"
                 style={{ display: 'none' }}
                 id="evidence-file"
                 type="file"
@@ -103,26 +111,31 @@ const EvidenceUpload = () => {
               )}
             </Grid>
             <Grid item xs={12} md={6}>
-              <select
+              <TextField
+                fullWidth
+                select
+                label="Evidence Type"
                 name="evidenceType"
                 value={evidenceData.evidenceType}
                 onChange={handleInputChange}
-                style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
               >
-                <option value="PHOTO">Photo</option>
-                <option value="VIDEO">Video</option>
-                <option value="DOCUMENT">Document</option>
-                <option value="FORENSIC_REPORT">Forensic Report</option>
-              </select>
+                {evidenceTypes.map((type) => (
+                  <MenuItem key={type.value} value={type.value}>
+                    {type.label}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
             <Grid item xs={12}>
-              <textarea
+              <TextField
+                fullWidth
+                multiline
+                rows={3}
                 name="description"
                 placeholder="Description"
                 value={evidenceData.description}
                 onChange={handleInputChange}
-                rows={3}
-                style={{ width: '100%', padding: '10px', border: '1px solid #ccc', borderRadius: '4px' }}
+                label="Description"
               />
             </Grid>
             <Grid item xs={12}>

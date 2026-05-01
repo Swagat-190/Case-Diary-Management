@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" role="img" aria-label="Case Diary">
+  <rect width="192" height="192" rx="40" fill="#C3B091" />
+  <circle cx="96" cy="96" r="60" fill="#FFF8EF" opacity="0.88" />
+  <path d="M68 58h44l14 14v52H68z" fill="#fff" />
+  <path d="M112 58v16h16" fill="none" stroke="#A8926A" stroke-width="7" stroke-linejoin="round" />
+  <path d="M80 90h32M80 108h24M80 126h32" stroke="#A8926A" stroke-width="7" stroke-linecap="round" />
+</svg>

@@ -1,0 +1,20 @@
+{
+  "short_name": "Case Diary",
+  "name": "Case Diary System",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "logo192.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#C3B091",
+  "background_color": "#f8f9fa"
+}

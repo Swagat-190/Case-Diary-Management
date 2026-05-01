@@ -73,10 +73,19 @@ public class CaseService {
         return caseRepository.findById(id).map(CaseDTO::fromEntity);
     }
 
+    public Case getCaseEntityById(Long id) {
+        return caseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Case not found"));
+    }
+
     public List<CaseDTO> getAllCases() {
         return caseRepository.findAll().stream()
                 .map(CaseDTO::fromEntity)
                 .collect(Collectors.toList());
+    }
+
+    public List<Case> getAllCaseEntities() {
+        return caseRepository.findAll();
     }
 
     public List<CaseDTO> getCasesByOfficer(Long officerId) {

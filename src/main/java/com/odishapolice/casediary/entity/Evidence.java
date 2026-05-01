@@ -26,6 +26,10 @@ public class Evidence {
     @Column(nullable = false)
     private String filePath;
 
+    private String contentType;
+
+    private Long fileSize;
+
     @ManyToOne
     @JoinColumn(name = "uploaded_by", nullable = false)
     private User uploadedBy;
@@ -44,6 +48,6 @@ public class Evidence {
     }
 
     public enum EvidenceType {
-        PHOTO, VIDEO, DOCUMENT, FORENSIC_REPORT
+        PHOTO, VIDEO, AUDIO, DOCUMENT, FORENSIC_REPORT
     }
 }

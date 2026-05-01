@@ -1,0 +1,16 @@
+# IDE
+.idea/
+**/.idea/
+*.iml
+src/*.iml
+
+# Build outputs
+**/target/
+out/
+
+# Runtime uploads / local data
+backend/uploads/evidence/
+
+# OS files
+.DS_Store
+Thumbs.db

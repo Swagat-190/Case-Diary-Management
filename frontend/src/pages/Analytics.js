@@ -37,7 +37,7 @@ const Analytics = () => {
       const caseTypes = Object.entries(caseTypesMap).map(([name, value], index) => ({
         name,
         value,
-        color: ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00'][index % 5]
+        color: ['#C3B091', '#A8926A', '#D1C2A1', '#BFA57D', '#E2D6C4'][index % 5]
       }));
 
       // Monthly data (group by month from dateOfFir)
@@ -76,8 +76,8 @@ const Analytics = () => {
       <AppBar 
         position="static" 
         sx={{ 
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '0 4px 20px 0 rgba(102, 126, 234, 0.3)'
+          background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
+          boxShadow: '0 4px 20px 0 rgba(195, 176, 145, 0.3)'
         }}
       >
         <Toolbar>
@@ -152,7 +152,7 @@ const Analytics = () => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="cases" fill="#8884d8" />
+              <Bar dataKey="cases" fill="#C3B091" />
             </BarChart>
           </Paper>
         </Grid>
@@ -170,7 +170,7 @@ const Analytics = () => {
                 labelLine={false}
                 label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                 outerRadius={80}
-                fill="#8884d8"
+                fill="#C3B091"
                 dataKey="value"
               >
                 {analyticsData.caseTypes.map((entry, index) => (

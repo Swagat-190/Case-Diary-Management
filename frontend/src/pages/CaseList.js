@@ -3,19 +3,20 @@ import {
   Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
   Paper, Button, Typography, Chip, Box, Container, AppBar, Toolbar, 
   Dialog, DialogTitle, DialogContent, DialogActions, TextField, Select,
-  MenuItem, FormControl, InputLabel
+  MenuItem, FormControl, InputLabel, IconButton, Badge
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { styled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   borderRadius: '15px',
   boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.1)',
   '& .MuiTableHead-root': {
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
     '& .MuiTableCell-head': {
       color: 'white',
       fontWeight: 'bold'
@@ -33,6 +34,8 @@ const CaseList = () => {
   const [cases, setCases] = useState([]);
   const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
+  const [user, setUser] = useState(null);
+  const [unreadNotifications, setUnreadNotifications] = useState(0);
   const [newCase, setNewCase] = useState({
     firNumber: '',
     policeStation: '',
@@ -45,8 +48,25 @@ const CaseList = () => {
   });
 
   useEffect(() => {
+    const userData = localStorage.getItem('user');
+    if (userData) {
+      setUser(JSON.parse(userData));
+    }
     fetchCases();
+    fetchUnreadNotifications();
   }, []);
+
+  const fetchUnreadNotifications = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.get('http://localhost:8080/api/notifications/unread-count', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setUnreadNotifications(response.data || 0);
+    } catch (error) {
+      setUnreadNotifications(0);
+    }
+  };
 
   const fetchCases = async () => {
     try {
@@ -61,6 +81,11 @@ const CaseList = () => {
   };
 
   const handleCreateCase = async () => {
+    if (user?.role !== 'SUPERVISOR' && user?.role !== 'ADMIN') {
+      alert('Only supervisors can create new cases.');
+      return;
+    }
+
     try {
       const token = localStorage.getItem('token');
       await axios.post('http://localhost:8080/api/cases', newCase, {
@@ -103,14 +128,28 @@ const CaseList = () => {
       <AppBar 
         position="sticky" 
         sx={{ 
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '0 4px 20px 0 rgba(102, 126, 234, 0.3)'
+          background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
+          boxShadow: '0 4px 20px 0 rgba(195, 176, 145, 0.3)'
         }}
       >
         <Toolbar>
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
             Case Management
           </Typography>
+          <IconButton
+            color="inherit"
+            onClick={() => {
+              if (user?.role === 'SUPERVISOR' || user?.role === 'ADMIN') {
+                navigate('/supervisor');
+              } else {
+                navigate('/cases');
+              }
+            }}
+          >
+            <Badge badgeContent={unreadNotifications} color="error">
+              <NotificationsIcon />
+            </Badge>
+          </IconButton>
           <Button 
             color="inherit" 
             onClick={handleLogout}
@@ -128,7 +167,7 @@ const CaseList = () => {
             variant="h4" 
             sx={{ 
               fontWeight: 'bold',
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+              background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
               backgroundClip: 'text',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent'
@@ -136,25 +175,27 @@ const CaseList = () => {
           >
             📋 Case List ({cases.length})
           </Typography>
-          <Button 
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => setOpenDialog(true)}
-            sx={{ 
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-              borderRadius: '8px',
-              textTransform: 'none',
-              fontSize: '16px',
-              fontWeight: 'bold'
-            }}
-          >
-            New Case
-          </Button>
+          {(user?.role === 'SUPERVISOR' || user?.role === 'ADMIN') && (
+            <Button 
+              variant="contained"
+              startIcon={<AddIcon />}
+              onClick={() => setOpenDialog(true)}
+              sx={{ 
+                background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
+                borderRadius: '8px',
+                textTransform: 'none',
+                fontSize: '16px',
+                fontWeight: 'bold'
+              }}
+            >
+              New Case
+            </Button>
+          )}
         </Box>
 
         {/* Create Case Dialog */}
-        <Dialog open={openDialog} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
-          <DialogTitle sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', color: 'white', fontWeight: 'bold' }}>
+        <Dialog open={openDialog && (user?.role === 'SUPERVISOR' || user?.role === 'ADMIN')} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
+          <DialogTitle sx={{ background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)', color: 'white', fontWeight: 'bold' }}>
             Create New Case
           </DialogTitle>
           <DialogContent sx={{ pt: 2 }}>
@@ -248,7 +289,7 @@ const CaseList = () => {
             <Button 
               onClick={handleCreateCase} 
               variant="contained"
-              sx={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}
+              sx={{ background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)' }}
             >
               Create
             </Button>

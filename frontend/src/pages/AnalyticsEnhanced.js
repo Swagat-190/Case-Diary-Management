@@ -18,7 +18,8 @@ const StyledCard = styled(Card)(({ theme }) => ({
   }
 }));
 
-const COLORS = ['#667eea', '#764ba2', '#f093fb', '#4facfe', '#00f2fe'];
+const COLORS = ['#C3B091', '#A8926A', '#D1C2A1', '#BFA57D', '#E2D6C4'];
+const COLORS = ['#C3B091', '#A8926A', '#D1C2A1', '#BFA57D', '#E2D6C4'];
 
 const AnalyticsEnhanced = () => {
   const [stats, setStats] = useState({
@@ -102,8 +103,8 @@ const AnalyticsEnhanced = () => {
       <AppBar 
         position="sticky" 
         sx={{ 
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          boxShadow: '0 4px 20px 0 rgba(102, 126, 234, 0.3)'
+          background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
+          boxShadow: '0 4px 20px 0 rgba(195, 176, 145, 0.3)'
         }}
       >
         <Toolbar>
@@ -135,7 +136,7 @@ const AnalyticsEnhanced = () => {
           sx={{ 
             fontWeight: 'bold', 
             mb: 4,
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
             backgroundClip: 'text',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent'
@@ -161,9 +162,11 @@ const AnalyticsEnhanced = () => {
                     <Line 
                       type="monotone" 
                       dataKey="cases" 
-                      stroke="#667eea" 
+                      stroke="#C3B091" 
+                                            stroke="#C3B091" 
                       strokeWidth={3}
-                      dot={{ fill: '#667eea', r: 6 }}
+                      dot={{ fill: '#C3B091', r: 6 }}
+                                          dot={{ fill: '#C3B091', r: 6 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -187,7 +190,8 @@ const AnalyticsEnhanced = () => {
                       labelLine={false}
                       label={({ name, value }) => `${name}: ${value}`}
                       outerRadius={80}
-                      fill="#8884d8"
+                      fill="#C3B091"
+                                            fill="#C3B091"
                       dataKey="value"
                     >
                       {stats.casesByStatus.map((entry, index) => (
@@ -214,7 +218,8 @@ const AnalyticsEnhanced = () => {
                     <XAxis dataKey="name" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="value" fill="#667eea" radius={[8, 8, 0, 0]} />
+                    <Bar dataKey="value" fill="#C3B091" radius={[8, 8, 0, 0]} />
+                                      <Bar dataKey="value" fill="#C3B091" radius={[8, 8, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
               </CardContent>

@@ -14,7 +14,7 @@ import Analytics from './pages/Analytics';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2',
+      main: '#C3B091',
     },
     secondary: {
       main: '#dc004e',
