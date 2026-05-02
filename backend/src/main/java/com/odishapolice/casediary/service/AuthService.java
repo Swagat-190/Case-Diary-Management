@@ -1,8 +1,8 @@
 package com.odishapolice.casediary.service;
 
+import com.odishapolice.casediary.controller.AuthController;
 import com.odishapolice.casediary.dto.AuthResponse;
 import com.odishapolice.casediary.dto.LoginRequest;
-import com.odishapolice.casediary.dto.RegisterRequest;
 import com.odishapolice.casediary.dto.UserDTO;
 import com.odishapolice.casediary.entity.User;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +18,13 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public AuthResponse login(LoginRequest loginRequest) {
-        User user = userService.findByUsername(loginRequest.getUsername())
-                .orElseThrow(() -> new RuntimeException("Invalid username or password"));
+        String identifier = loginRequest.getUsernameOrEmail();
+        User user = userService.findByEmail(identifier)
+                .or(() -> userService.findByUsername(identifier))
+                .orElseThrow(() -> new RuntimeException("Invalid email/username or password"));
 
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new RuntimeException("Invalid username or password");
+            throw new RuntimeException("Invalid email/username or password");
         }
 
         String token = jwtService.generateToken(user);
@@ -31,27 +33,25 @@ public class AuthService {
         return new AuthResponse(token, userDTO);
     }
 
-    public AuthResponse register(RegisterRequest registerRequest) {
-        User.Role requestedRole = User.Role.valueOf(registerRequest.getRole().toUpperCase());
-        if (requestedRole != User.Role.SUPERVISOR) {
-            throw new RuntimeException("Only supervisors can register from this endpoint");
+    public void changePassword(AuthController.ChangePasswordRequest request) {
+        User user = getCurrentUser();
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
+            throw new RuntimeException("Current password is incorrect");
         }
 
-        UserDTO userDTO = new UserDTO();
-        userDTO.setUsername(registerRequest.getUsername());
-        userDTO.setPassword(registerRequest.getPassword());
-        userDTO.setEmail(registerRequest.getEmail());
-        userDTO.setRole(requestedRole);
-        userDTO.setPoliceStation(registerRequest.getPoliceStation());
-        userDTO.setDesignation(registerRequest.getDesignation());
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setFirstLogin(false);
+        userService.save(user);
+    }
 
-        UserDTO savedUser = userService.createUser(userDTO);
+    private User getCurrentUser() {
+        org.springframework.security.core.Authentication authentication = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            throw new RuntimeException("User not authenticated");
+        }
 
-        // Auto-login after registration
-        User user = userService.findByUsername(savedUser.getUsername())
-                .orElseThrow(() -> new RuntimeException("User creation failed"));
-
-        String token = jwtService.generateToken(user);
-        return new AuthResponse(token, savedUser);
+        return userService.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

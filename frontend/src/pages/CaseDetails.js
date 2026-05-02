@@ -252,20 +252,20 @@ const CaseDetails = () => {
         }}
       >
         <Toolbar>
-          <Button 
+          <IconButton 
             color="inherit" 
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate('/cases')}
+            onClick={() => navigate('/')}
+            sx={{ mr: 2 }}
           >
-            Back
-          </Button>
+            <ArrowBackIcon />
+          </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
             Case Details
           </Typography>
           <IconButton
             color="inherit"
             onClick={() => {
-              if (user?.role === 'SUPERVISOR' || user?.role === 'ADMIN') {
+              if (user?.role === 'SUPERVISOR') {
                 navigate('/supervisor');
               } else {
                 navigate('/cases');
@@ -369,32 +369,36 @@ const CaseDetails = () => {
                       {caseData?.investigationOfficer ? 'Reassign Officer' : 'Assign Officer'}
                     </Button>
                   )}
-                  <Button 
-                    variant="contained" 
-                    fullWidth
-                    sx={{ 
-                      background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
-                      borderRadius: '8px',
-                      textTransform: 'none',
-                      fontWeight: 'bold'
-                    }}
-                    onClick={() => navigate(`/case-diary/${id}`)}
-                  >
-                    Add Diary Entry
-                  </Button>
-                  <Button 
-                    variant="contained" 
-                    fullWidth
-                    sx={{ 
-                      background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                      borderRadius: '8px',
-                      textTransform: 'none',
-                      fontWeight: 'bold'
-                    }}
-                    onClick={() => navigate(`/evidence/${id}`)}
-                  >
-                    Upload Evidence
-                  </Button>
+                  {user?.role !== 'ADMIN' && (
+                    <>
+                      <Button 
+                        variant="contained" 
+                        fullWidth
+                        sx={{ 
+                          background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)',
+                          borderRadius: '8px',
+                          textTransform: 'none',
+                          fontWeight: 'bold'
+                        }}
+                        onClick={() => navigate(`/case-diary/${id}`)}
+                      >
+                        Add Diary Entry
+                      </Button>
+                      <Button 
+                        variant="contained" 
+                        fullWidth
+                        sx={{ 
+                          background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+                          borderRadius: '8px',
+                          textTransform: 'none',
+                          fontWeight: 'bold'
+                        }}
+                        onClick={() => navigate(`/evidence/${id}`)}
+                      >
+                        Upload Evidence
+                      </Button>
+                    </>
+                  )}
                   {user?.role === 'IO' && caseData.caseStatus === 'OPEN' && (
                     <Button 
                       variant="contained" 
@@ -410,7 +414,7 @@ const CaseDetails = () => {
                       Mark Under Investigation
                     </Button>
                   )}
-                  {(user?.role === 'SUPERVISOR' || user?.role === 'ADMIN') && caseData.caseStatus !== 'CLOSED' && (
+                  {user?.role === 'SUPERVISOR' && caseData.caseStatus !== 'CLOSED' && (
                     <Button 
                       variant="contained" 
                       fullWidth
@@ -620,7 +624,7 @@ const CaseDetails = () => {
                             Download / Open File
                           </Button>
 
-                          {(user?.role === 'SUPERVISOR' || user?.role === 'ADMIN') && evidence.status === 'PENDING' && (
+                          {user?.role === 'SUPERVISOR' && evidence.status === 'PENDING' && (
                             <Button
                               variant="contained"
                               onClick={() => handleApproveEvidence(evidence.id)}

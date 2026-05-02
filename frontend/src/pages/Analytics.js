@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import IconButton from '@mui/material/IconButton';
 import { Grid, Card, CardContent, Typography, Paper, Button, Box, AppBar, Toolbar } from '@mui/material';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart, Pie, Cell } from 'recharts';
 import { useNavigate } from 'react-router-dom';
@@ -81,14 +82,13 @@ const Analytics = () => {
         }}
       >
         <Toolbar>
-          <Button 
+          <IconButton 
             color="inherit" 
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/')}
             sx={{ mr: 2 }}
           >
-            Back
-          </Button>
+            <ArrowBackIcon />
+          </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
             Analytics & Reports
           </Typography>

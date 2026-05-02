@@ -66,6 +66,12 @@ public class UserService {
         userDTO.setDesignation(request.getDesignation());
 
         UserDTO savedUser = createUser(userDTO);
+
+        // Set firstLogin to true for new IO officers
+        User user = userRepository.findById(savedUser.getId()).orElseThrow();
+        user.setFirstLogin(true);
+        userRepository.save(user);
+
         return new IoOfficerCreationResponse(savedUser, username, temporaryPassword);
     }
 
@@ -79,7 +85,7 @@ public class UserService {
         }
     }
 
-    private String generateUniqueUsername(String fullName, String batch) {
+    public String generateUniqueUsername(String fullName, String batch) {
         String normalizedName = fullName == null ? "io" : fullName.toLowerCase().replaceAll("[^a-z0-9]+", ".");
         normalizedName = normalizedName.replaceAll("^\\.|\\.$", "");
         String normalizedBatch = batch == null ? "batch" : batch.toLowerCase().replaceAll("[^a-z0-9]+", "");
@@ -94,7 +100,7 @@ public class UserService {
         return candidate;
     }
 
-    private String generateTemporaryPassword() {
+    public String generateTemporaryPassword() {
         SecureRandom secureRandom = new SecureRandom();
         StringBuilder password = new StringBuilder();
         for (int i = 0; i < 12; i++) {
@@ -107,6 +113,14 @@ public class UserService {
         return userRepository.findByUsername(username);
     }
 
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+
     public List<UserDTO> getAllUsers() {
         return userRepository.findAll().stream()
                 .map(UserDTO::fromEntity)
@@ -115,6 +129,12 @@ public class UserService {
 
     public List<UserDTO> getIoOfficers() {
         return userRepository.findByRole(User.Role.IO).stream()
+                .map(UserDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+
+    public List<UserDTO> getSupervisors() {
+        return userRepository.findByRole(User.Role.SUPERVISOR).stream()
                 .map(UserDTO::fromEntity)
                 .collect(Collectors.toList());
     }

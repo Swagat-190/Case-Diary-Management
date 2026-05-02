@@ -28,6 +28,21 @@ const ProtectedRoute = ({ children }) => {
   return token ? children : <Navigate to="/login" replace />;
 };
 
+// Role Protected Route Component
+const RoleProtectedRoute = ({ children, allowedRoles }) => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null;
+  if (!user || !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
 // Public Route Component (redirects to dashboard if already logged in)
 const PublicRoute = ({ children }) => {
   const token = localStorage.getItem('token');
@@ -51,34 +66,34 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/cases" element={
-            <ProtectedRoute>
+            <RoleProtectedRoute allowedRoles={[ 'SUPERVISOR', 'IO' ]}>
               <CaseList />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           } />
           <Route path="/cases/:id" element={
-            <ProtectedRoute>
+            <RoleProtectedRoute allowedRoles={[ 'SUPERVISOR', 'IO' ]}>
               <CaseDetails />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           } />
           <Route path="/case-diary/:caseId" element={
-            <ProtectedRoute>
+            <RoleProtectedRoute allowedRoles={[ 'SUPERVISOR', 'IO' ]}>
               <CaseDiaryForm />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           } />
           <Route path="/evidence/:caseId" element={
-            <ProtectedRoute>
+            <RoleProtectedRoute allowedRoles={[ 'SUPERVISOR', 'IO' ]}>
               <EvidenceUpload />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           } />
           <Route path="/supervisor" element={
-            <ProtectedRoute>
+            <RoleProtectedRoute allowedRoles={[ 'SUPERVISOR' ]}>
               <SupervisorDashboard />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           } />
           <Route path="/analytics" element={
-            <ProtectedRoute>
+            <RoleProtectedRoute allowedRoles={[ 'SUPERVISOR', 'IO' ]}>
               <Analytics />
-            </ProtectedRoute>
+            </RoleProtectedRoute>
           } />
         </Routes>
       </Router>

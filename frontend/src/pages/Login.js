@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
-  TextField, Button, Typography, Box, Alert, FormControl, InputLabel, 
-  Select, MenuItem, Container, Card, Tab, Tabs 
+  TextField, Button, Typography, Box, Alert, Container, Card, Dialog, DialogTitle, DialogContent, DialogActions
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -23,63 +22,70 @@ const FormCard = styled(Card)(({ theme }) => ({
 }));
 
 const Login = () => {
-  const [tabValue, setTabValue] = useState(0);
   const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    email: '',
-    role: 'SUPERVISOR',
-    policeStation: '',
-    designation: ''
+    usernameOrEsernameOrEmail: '',
+    password: ''
   });
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [passwordError, setPasswordError] = useState('');
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleTabChange = (event, newValue) => {
-    setTabValue(newValue);
-    setError('');
-    setSuccess('');
-    if (newValue === 1) {
-      setFormData({
-        username: '',
-        password: '',
-        email: '',
-        role: 'SUPERVISOR',
-        policeStation: '',
-        designation: ''
+  const handlePasswordChange = (e) => {
+    setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+  };
+
+  const handleChangePassword = async () => {
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError('New passwords do not match');
+      return;
+    }
+
+    setPasswordError('');
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post('http://localhost:8080/api/auth/change-password', {
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
       });
+
+      setChangePasswordOpen(false);
+      navigate('/');
+    } catch (err) {
+      setPasswordError(err.response?.data?.message || 'Failed to change password');
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
     setLoading(true);
 
     try {
-      const isLogin = tabValue === 0;
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-      
-      const response = await axios.post(`http://localhost:8080${endpoint}`, formData);
+      const response = await axios.post(`http://localhost:8080/api/auth/login`, formData);
 
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
 
-      if (isLogin) {
-        navigate('/');
+      if (response.data.user.firstLogin) {
+        setChangePasswordOpen(true);
       } else {
-        setSuccess('Registration successful! You are now logged in.');
-        setTimeout(() => navigate('/'), 2000);
+        navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.message || (tabValue === 0 ? 'Invalid username or password' : 'Registration failed'));
+      setError(err.response?.data?.message || 'Invalid email or password');
     } finally {
       setLoading(false);
     }
@@ -125,29 +131,16 @@ const Login = () => {
           </Box>
 
           {error && <Alert severity="error" sx={{ mb: 2, borderRadius: '8px' }}>{error}</Alert>}
-          {success && <Alert severity="success" sx={{ mb: 2, borderRadius: '8px' }}>{success}</Alert>}
-
-          <Tabs 
-            value={tabValue} 
-            onChange={handleTabChange}
-            sx={{ 
-              mb: 3, 
-              borderBottom: '1px solid #eee',
-              '& .MuiTabs-indicator': {
-                background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)'
-              }
-            }}
-          >
-            <Tab label="Login" sx={{ fontWeight: 'bold' }} />
-            <Tab label="Register" sx={{ fontWeight: 'bold' }} />
-          </Tabs>
 
           <form onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label="Username"
-              name="username"
-              value={formData.username}
+              label="Email or Username"
+              placeholder="Enter your email or username"
+              name="usernameOrEmail"
+              type="text"
+              autoComplete="username"
+              value={formData.usernameOrEmail}
               onChange={handleChange}
               margin="normal"
               required
@@ -166,45 +159,6 @@ const Login = () => {
               variant="outlined"
               size="small"
             />
-
-            {tabValue === 1 && (
-              <>
-                <TextField
-                  fullWidth
-                  label="Email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  margin="normal"
-                  required
-                  variant="outlined"
-                  size="small"
-                />
-                <TextField
-                  fullWidth
-                  label="Police Station"
-                  name="policeStation"
-                  value={formData.policeStation}
-                  onChange={handleChange}
-                  margin="normal"
-                  required
-                  variant="outlined"
-                  size="small"
-                />
-                <TextField
-                  fullWidth
-                  label="Designation"
-                  name="designation"
-                  value={formData.designation}
-                  onChange={handleChange}
-                  margin="normal"
-                  required
-                  variant="outlined"
-                  size="small"
-                />
-              </>
-            )}
 
             <Button
               type="submit"
@@ -226,12 +180,55 @@ const Login = () => {
                 }
               }}
             >
-              {loading ? 'Processing...' : (tabValue === 0 ? 'Login' : 'Register')}
+              {loading ? 'Logging in...' : 'Login'}
             </Button>
           </form>
 
         </FormCard>
       </Container>
+
+      {/* Password Change Dialog */}
+      <Dialog open={changePasswordOpen} onClose={() => {}}>
+        <DialogTitle>Change Password</DialogTitle>
+        <DialogContent>
+          {passwordError && <Alert severity="error" sx={{ mb: 2 }}>{passwordError}</Alert>}
+          <TextField
+            fullWidth
+            label="Current Password"
+            name="currentPassword"
+            type="password"
+            value={passwordData.currentPassword}
+            onChange={handlePasswordChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="New Password"
+            name="newPassword"
+            type="password"
+            value={passwordData.newPassword}
+            onChange={handlePasswordChange}
+            margin="normal"
+            required
+          />
+          <TextField
+            fullWidth
+            label="Confirm New Password"
+            name="confirmPassword"
+            type="password"
+            value={passwordData.confirmPassword}
+            onChange={handlePasswordChange}
+            margin="normal"
+            required
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleChangePassword} variant="contained">
+            Change Password
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };

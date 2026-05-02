@@ -2,11 +2,11 @@ package com.odishapolice.casediary.controller;
 
 import com.odishapolice.casediary.dto.AuthResponse;
 import com.odishapolice.casediary.dto.LoginRequest;
-import com.odishapolice.casediary.dto.RegisterRequest;
 import com.odishapolice.casediary.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import lombok.Data;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,13 +26,19 @@ public class AuthController {
         }
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest registerRequest) {
+    @PostMapping("/change-password")
+    public ResponseEntity<Void> changePassword(@RequestBody ChangePasswordRequest request) {
         try {
-            AuthResponse response = authService.register(registerRequest);
-            return ResponseEntity.ok(response);
+            authService.changePassword(request);
+            return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
+    }
+
+    @Data
+    public static class ChangePasswordRequest {
+        private String currentPassword;
+        private String newPassword;
     }
 }

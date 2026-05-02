@@ -101,21 +101,25 @@ public class CaseService {
     }
 
     public Optional<CaseDTO> getCaseById(Long id) {
+        ensureNonAdminAccess();
         return caseRepository.findById(id).map(CaseDTO::fromEntity);
     }
 
     public Case getCaseEntityById(Long id) {
+        ensureNonAdminAccess();
         return caseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Case not found"));
     }
 
     public List<CaseDTO> getAllCases() {
+        ensureNonAdminAccess();
         return caseRepository.findAll().stream()
                 .map(CaseDTO::fromEntity)
                 .collect(Collectors.toList());
     }
 
     public List<Case> getAllCaseEntities() {
+        ensureNonAdminAccess();
         return caseRepository.findAll();
     }
 
@@ -134,7 +138,7 @@ public class CaseService {
     public List<CaseDTO> getCasesForCurrentUser() {
         User currentUser = getCurrentUser();
 
-        if (currentUser.getRole() == User.Role.SUPERVISOR || currentUser.getRole() == User.Role.ADMIN) {
+        if (currentUser.getRole() == User.Role.SUPERVISOR) {
             return getAllCases();
         }
 
@@ -209,7 +213,7 @@ public class CaseService {
         Case caseEntity = getCaseEntityById(caseId);
         User currentUser = getCurrentUser();
 
-        if (currentUser.getRole() == User.Role.SUPERVISOR || currentUser.getRole() == User.Role.ADMIN) {
+        if (currentUser.getRole() == User.Role.SUPERVISOR) {
             caseEntity.setCaseStatus(newStatus);
             return CaseDTO.fromEntity(caseRepository.save(caseEntity));
         }
@@ -248,8 +252,15 @@ public class CaseService {
 
     private void ensureSupervisorAccess() {
         User currentUser = getCurrentUser();
-        if (currentUser.getRole() != User.Role.SUPERVISOR && currentUser.getRole() != User.Role.ADMIN) {
+        if (currentUser.getRole() != User.Role.SUPERVISOR) {
             throw new RuntimeException("Only supervisors can perform this action");
+        }
+    }
+
+    private void ensureNonAdminAccess() {
+        User currentUser = getCurrentUser();
+        if (currentUser.getRole() == User.Role.ADMIN) {
+            throw new RuntimeException("Administrators cannot access case operations");
         }
     }
 

@@ -38,7 +38,12 @@ public class EvidenceResponse {
         response.setStatus(evidence.getStatus() != null ? evidence.getStatus().name() : null);
         response.setReviewedAt(evidence.getReviewedAt());
         response.setReviewedBy(evidence.getReviewedBy() != null ? UserDTO.fromEntity(evidence.getReviewedBy()) : null);
-        response.setDownloadUrl("http://localhost:8080/api/evidence/" + evidence.getId() + "/download");
+        String fp = evidence.getFilePath();
+        if (fp != null && (fp.startsWith("http://") || fp.startsWith("https://"))) {
+            response.setDownloadUrl(fp);
+        } else {
+            response.setDownloadUrl("http://localhost:8080/api/evidence/" + evidence.getId() + "/download");
+        }
         return response;
     }
 }

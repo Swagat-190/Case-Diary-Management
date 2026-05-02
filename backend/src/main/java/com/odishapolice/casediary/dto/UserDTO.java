@@ -1,5 +1,6 @@
 package com.odishapolice.casediary.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.odishapolice.casediary.entity.User;
 import lombok.Data;
 
@@ -14,7 +15,9 @@ public class UserDTO {
     private User.Role role;
     private String policeStation;
     private String designation;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    private Boolean firstLogin;
 
     public static UserDTO fromEntity(User user) {
         UserDTO dto = new UserDTO();
@@ -27,6 +30,7 @@ public class UserDTO {
         dto.setRole(user.getRole());
         dto.setPoliceStation(user.getPoliceStation());
         dto.setDesignation(user.getDesignation());
+        dto.setFirstLogin(user.getFirstLogin());
         return dto;
     }
 }

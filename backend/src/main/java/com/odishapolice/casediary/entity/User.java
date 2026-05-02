@@ -27,6 +27,9 @@ public class User {
 
     private String phoneNumber;
 
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean firstLogin = true;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;

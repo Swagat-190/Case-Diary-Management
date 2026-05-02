@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import IconButton from '@mui/material/IconButton';
 import { Button, Paper, Typography, Grid, LinearProgress, Box, AppBar, Toolbar, TextField, MenuItem } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import axios from 'axios';
@@ -73,14 +74,13 @@ const EvidenceUpload = () => {
         }}
       >
         <Toolbar>
-          <Button 
+          <IconButton 
             color="inherit" 
-            startIcon={<ArrowBackIcon />}
-            onClick={() => navigate(-1)}
+            onClick={() => navigate('/')}
             sx={{ mr: 2 }}
           >
-            Back
-          </Button>
+            <ArrowBackIcon />
+          </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
             Upload Evidence
           </Typography>

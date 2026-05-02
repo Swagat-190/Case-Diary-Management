@@ -11,6 +11,7 @@ import { styled } from '@mui/material/styles';
 import AddIcon from '@mui/icons-material/Add';
 import LogoutIcon from '@mui/icons-material/Logout';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 
 const StyledTableContainer = styled(TableContainer)(({ theme }) => ({
   borderRadius: '15px',
@@ -81,8 +82,7 @@ const CaseList = () => {
   };
 
   const handleCreateCase = async () => {
-    if (user?.role !== 'SUPERVISOR' && user?.role !== 'ADMIN') {
-      alert('Only supervisors can create new cases.');
+      if (user?.role !== 'SUPERVISOR') {
       return;
     }
 
@@ -133,13 +133,20 @@ const CaseList = () => {
         }}
       >
         <Toolbar>
+          <IconButton 
+            color="inherit" 
+            onClick={() => navigate('/')}
+            sx={{ mr: 2 }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
           <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 'bold' }}>
             Case Management
           </Typography>
           <IconButton
             color="inherit"
             onClick={() => {
-              if (user?.role === 'SUPERVISOR' || user?.role === 'ADMIN') {
+              if (user?.role === 'SUPERVISOR') {
                 navigate('/supervisor');
               } else {
                 navigate('/cases');
@@ -175,7 +182,7 @@ const CaseList = () => {
           >
             📋 Case List ({cases.length})
           </Typography>
-          {(user?.role === 'SUPERVISOR' || user?.role === 'ADMIN') && (
+          {user?.role === 'SUPERVISOR' && (
             <Button 
               variant="contained"
               startIcon={<AddIcon />}
@@ -194,7 +201,7 @@ const CaseList = () => {
         </Box>
 
         {/* Create Case Dialog */}
-        <Dialog open={openDialog && (user?.role === 'SUPERVISOR' || user?.role === 'ADMIN')} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
+        <Dialog open={openDialog && user?.role === 'SUPERVISOR'} onClose={() => setOpenDialog(false)} maxWidth="sm" fullWidth>
           <DialogTitle sx={{ background: 'linear-gradient(135deg, #C3B091 0%, #A8926A 100%)', color: 'white', fontWeight: 'bold' }}>
             Create New Case
           </DialogTitle>
