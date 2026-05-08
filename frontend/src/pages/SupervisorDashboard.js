@@ -249,6 +249,15 @@ const SupervisorDashboard = () => {
     <Box>
       <AppBar position="static">
         <Toolbar>
+          <IconButton
+            color="inherit"
+            edge="start"
+            aria-label="Back to dashboard"
+            onClick={() => navigate('/')}
+            sx={{ mr: 1 }}
+          >
+            <ArrowBackIcon />
+          </IconButton>
           <Typography sx={{ flexGrow: 1 }}>Supervisor Dashboard</Typography>
 
           {/* ✅ FIXED NOTIFICATION */}

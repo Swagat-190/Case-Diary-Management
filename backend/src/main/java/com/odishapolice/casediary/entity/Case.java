@@ -44,6 +44,8 @@ public class Case {
     private String accusedName;
     private String accusedAddress;
 
+    private String accusedPhoneNumber;
+
     @Column(columnDefinition = "TEXT")
     private String crimeDescription;
 

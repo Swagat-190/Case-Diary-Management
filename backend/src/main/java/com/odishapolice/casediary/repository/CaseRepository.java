@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface CaseRepository extends JpaRepository<Case, Long> {
     Optional<Case> findByFirNumber(String firNumber);
     List<Case> findByInvestigationOfficerId(Long officerId);
+    List<Case> findBySupervisorId(Long supervisorId);
     List<Case> findByCaseStatus(Case.CaseStatus status);
     List<Case> findByPoliceStation(String policeStation);
 

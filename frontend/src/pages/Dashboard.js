@@ -240,7 +240,7 @@ const Dashboard = () => {
 
   if (user?.role !== 'ADMIN') {
     menuItems.push({ label: 'Cases', icon: <FolderIcon />, path: '/cases' });
-    menuItems.push({ label: 'Case Diary', icon: <AssignmentIcon />, path: '/case-diary/1' });
+    menuItems.push({ label: 'Case Diary', icon: <AssignmentIcon />, path: '/case-diary' });
     menuItems.push({ label: 'Analytics', icon: <AnalyticsIcon />, path: '/analytics' });
   }
 

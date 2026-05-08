@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import { TextField, Button, Paper, Typography, Grid, Box, AppBar, Toolbar, MenuItem } from '@mui/material';
@@ -8,6 +8,9 @@ import axios from 'axios';
 const CaseDiaryForm = () => {
   const { caseId } = useParams();
   const navigate = useNavigate();
+  const [availableCases, setAvailableCases] = useState([]);
+  const [selectedCaseId, setSelectedCaseId] = useState(caseId ? String(caseId) : '');
+  const [loadingCases, setLoadingCases] = useState(false);
   const [formData, setFormData] = useState({
     section: '',
     content: ''
@@ -26,18 +29,51 @@ const CaseDiaryForm = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  useEffect(() => {
+    if (caseId) {
+      setSelectedCaseId(String(caseId));
+      return;
+    }
+
+    const fetchCases = async () => {
+      setLoadingCases(true);
+      try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:8080/api/cases', {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        setAvailableCases(response.data || []);
+      } catch (error) {
+        console.error('Error fetching cases:', error);
+        setAvailableCases([]);
+      } finally {
+        setLoadingCases(false);
+      }
+    };
+
+    fetchCases();
+  }, [caseId]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
+
+      const effectiveCaseId = caseId ? parseInt(caseId) : parseInt(selectedCaseId);
+      if (!effectiveCaseId) {
+        alert('Please select a case');
+        return;
+      }
+
       await axios.post('http://localhost:8080/api/case-diary', {
-        caseId: parseInt(caseId),
+        caseId: effectiveCaseId,
         ...formData
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert('Case diary entry added successfully!');
       setFormData({ section: '', content: '' });
+      navigate(`/cases/${effectiveCaseId}`);
     } catch (error) {
       console.error('Error adding diary entry:', error);
       alert('Error adding diary entry');
@@ -77,6 +113,28 @@ const CaseDiaryForm = () => {
           </Typography>
           <form onSubmit={handleSubmit}>
             <Grid container spacing={3}>
+              {!caseId && (
+                <Grid item xs={12} md={6}>
+                  <TextField
+                    fullWidth
+                    select
+                    label="Select Case"
+                    name="selectedCaseId"
+                    value={selectedCaseId}
+                    onChange={(e) => setSelectedCaseId(e.target.value)}
+                    required
+                    disabled={loadingCases}
+                    helperText={loadingCases ? 'Loading cases...' : 'Choose the case for this diary entry'}
+                  >
+                    <MenuItem value="">Select a case</MenuItem>
+                    {availableCases.map((c) => (
+                      <MenuItem key={c.id} value={String(c.id)}>
+                        {c.firNumber} — {c.policeStation}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              )}
               <Grid item xs={12} md={6}>
                 <TextField
                   fullWidth

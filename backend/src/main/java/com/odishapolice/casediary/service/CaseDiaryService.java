@@ -48,7 +48,7 @@ public class CaseDiaryService {
     }
 
     public List<PendencyAlertResponse> getPendencyAlerts() {
-        List<Case> cases = caseService.getAllCaseEntities();
+        List<Case> cases = caseService.getCaseEntitiesForCurrentUser();
         List<PendencyAlertResponse> alerts = new ArrayList<>();
 
         for (Case caseEntity : cases) {

@@ -51,6 +51,7 @@ public class CaseService {
         caseEntity.setComplainantAddress(caseDTO.getComplainantAddress());
         caseEntity.setAccusedName(caseDTO.getAccusedName());
         caseEntity.setAccusedAddress(caseDTO.getAccusedAddress());
+        caseEntity.setAccusedPhoneNumber(caseDTO.getAccusedPhoneNumber());
         caseEntity.setCrimeDescription(caseDTO.getCrimeDescription());
         caseEntity.setSupervisorId(currentSupervisor.getId());
 
@@ -72,8 +73,14 @@ public class CaseService {
     public CaseDTO updateCase(Long id, CaseDTO caseDTO) {
         ensureSupervisorAccess();
 
+        User currentSupervisor = getCurrentUser();
+
         Case existingCase = caseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Case not found"));
+
+        if (existingCase.getSupervisorId() == null || !existingCase.getSupervisorId().equals(currentSupervisor.getId())) {
+            throw new RuntimeException("Forbidden");
+        }
 
         User previousOfficer = existingCase.getInvestigationOfficer();
 
@@ -85,6 +92,7 @@ public class CaseService {
         existingCase.setComplainantAddress(caseDTO.getComplainantAddress());
         existingCase.setAccusedName(caseDTO.getAccusedName());
         existingCase.setAccusedAddress(caseDTO.getAccusedAddress());
+        existingCase.setAccusedPhoneNumber(caseDTO.getAccusedPhoneNumber());
         existingCase.setCrimeDescription(caseDTO.getCrimeDescription());
 
         if (caseDTO.getInvestigationOfficer() != null && caseDTO.getInvestigationOfficer().getId() != null) {
@@ -105,13 +113,24 @@ public class CaseService {
 
     public Optional<CaseDTO> getCaseById(Long id) {
         ensureNonAdminAccess();
-        return caseRepository.findById(id).map(CaseDTO::fromEntity);
+        User currentUser = getCurrentUser();
+        return caseRepository.findById(id)
+                .filter(caseEntity -> canAccessCase(caseEntity, currentUser))
+                .map(CaseDTO::fromEntity);
     }
 
     public Case getCaseEntityById(Long id) {
         ensureNonAdminAccess();
-        return caseRepository.findById(id)
+        User currentUser = getCurrentUser();
+
+        Case caseEntity = caseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Case not found"));
+
+        if (!canAccessCase(caseEntity, currentUser)) {
+            throw new RuntimeException("Forbidden");
+        }
+
+        return caseEntity;
     }
 
     public List<CaseDTO> getAllCases() {
@@ -142,8 +161,8 @@ public class CaseService {
         User currentUser = getCurrentUser();
 
         if (currentUser.getRole() == User.Role.SUPERVISOR) {
-            // Return cases created by this supervisor OR assigned to their IO officers
-            return caseRepository.findCasesByCreatorOrAssignedSupervisor(currentUser.getId()).stream()
+            // Supervisors can only see cases they created
+            return caseRepository.findBySupervisorId(currentUser.getId()).stream()
                     .map(CaseDTO::fromEntity)
                     .collect(Collectors.toList());
         }
@@ -152,6 +171,20 @@ public class CaseService {
             return caseRepository.findByInvestigationOfficerId(currentUser.getId()).stream()
                     .map(CaseDTO::fromEntity)
                     .collect(Collectors.toList());
+        }
+
+        return List.of();
+    }
+
+    public List<Case> getCaseEntitiesForCurrentUser() {
+        User currentUser = getCurrentUser();
+
+        if (currentUser.getRole() == User.Role.SUPERVISOR) {
+            return caseRepository.findBySupervisorId(currentUser.getId());
+        }
+
+        if (currentUser.getRole() == User.Role.IO) {
+            return caseRepository.findByInvestigationOfficerId(currentUser.getId());
         }
 
         return List.of();
@@ -268,6 +301,20 @@ public class CaseService {
         if (currentUser.getRole() == User.Role.ADMIN) {
             throw new RuntimeException("Administrators cannot access case operations");
         }
+    }
+
+    private boolean canAccessCase(Case caseEntity, User currentUser) {
+        if (currentUser.getRole() == User.Role.SUPERVISOR) {
+            return caseEntity.getSupervisorId() != null && caseEntity.getSupervisorId().equals(currentUser.getId());
+        }
+
+        if (currentUser.getRole() == User.Role.IO) {
+            return caseEntity.getInvestigationOfficer() != null
+                    && caseEntity.getInvestigationOfficer().getId() != null
+                    && caseEntity.getInvestigationOfficer().getId().equals(currentUser.getId());
+        }
+
+        return false;
     }
 
     private User getUserEntityById(Long userId) {

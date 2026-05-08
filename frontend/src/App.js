@@ -177,6 +177,11 @@ function App() {
               <CaseDiaryForm />
             </RoleProtectedRoute>
           } />
+          <Route path="/case-diary" element={
+            <RoleProtectedRoute allowedRoles={[ 'SUPERVISOR', 'IO' ]}>
+              <CaseDiaryForm />
+            </RoleProtectedRoute>
+          } />
           <Route path="/evidence/:caseId" element={
             <RoleProtectedRoute allowedRoles={[ 'SUPERVISOR', 'IO' ]}>
               <EvidenceUpload />

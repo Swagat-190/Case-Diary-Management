@@ -18,6 +18,7 @@ public class CaseDTO {
     private String complainantAddress;
     private String accusedName;
     private String accusedAddress;
+    private String accusedPhoneNumber;
     private String crimeDescription;
 
     public static CaseDTO fromEntity(Case caseEntity) {
@@ -35,6 +36,7 @@ public class CaseDTO {
         dto.setComplainantAddress(caseEntity.getComplainantAddress());
         dto.setAccusedName(caseEntity.getAccusedName());
         dto.setAccusedAddress(caseEntity.getAccusedAddress());
+        dto.setAccusedPhoneNumber(caseEntity.getAccusedPhoneNumber());
         dto.setCrimeDescription(caseEntity.getCrimeDescription());
         return dto;
     }
