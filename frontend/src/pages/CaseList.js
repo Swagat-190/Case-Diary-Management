@@ -42,8 +42,11 @@ const CaseList = () => {
     policeStation: '',
     caseType: '',
     ipcSections: '',
+    complainantName: '',
+    complainantAddress: '',
     accusedName: '',
-    accusedPhone: '',
+    accusedAddress: '',
+    crimeDescription: '',
     caseStatus: 'OPEN',
     dateOfFir: new Date().toISOString().split('T')[0]
   });
@@ -97,6 +100,11 @@ const CaseList = () => {
         policeStation: '',
         caseType: '',
         ipcSections: '',
+        complainantName: '',
+        complainantAddress: '',
+        accusedName: '',
+        accusedAddress: '',
+        crimeDescription: '',
         caseStatus: 'OPEN',
         dateOfFir: new Date().toISOString().split('T')[0]
       });
@@ -251,6 +259,24 @@ const CaseList = () => {
             />
             <TextField
               fullWidth
+              label="Complainant Name"
+              value={newCase.complainantName}
+              onChange={(e) => setNewCase({ ...newCase, complainantName: e.target.value })}
+              margin="normal"
+              variant="outlined"
+            />
+            <TextField
+              fullWidth
+              label="Complainant Address"
+              value={newCase.complainantAddress}
+              onChange={(e) => setNewCase({ ...newCase, complainantAddress: e.target.value })}
+              margin="normal"
+              variant="outlined"
+              multiline
+              rows={2}
+            />
+            <TextField
+              fullWidth
               label="Accused Name"
               value={newCase.accusedName}
               onChange={(e) => setNewCase({ ...newCase, accusedName: e.target.value })}
@@ -259,11 +285,23 @@ const CaseList = () => {
             />
             <TextField
               fullWidth
-              label="Accused Phone"
-              value={newCase.accusedPhone}
-              onChange={(e) => setNewCase({ ...newCase, accusedPhone: e.target.value })}
+              label="Accused Address"
+              value={newCase.accusedAddress}
+              onChange={(e) => setNewCase({ ...newCase, accusedAddress: e.target.value })}
               margin="normal"
               variant="outlined"
+              multiline
+              rows={2}
+            />
+            <TextField
+              fullWidth
+              label="Crime Description"
+              value={newCase.crimeDescription}
+              onChange={(e) => setNewCase({ ...newCase, crimeDescription: e.target.value })}
+              margin="normal"
+              variant="outlined"
+              multiline
+              rows={3}
             />
             <FormControl fullWidth margin="normal">
               <InputLabel>Status</InputLabel>

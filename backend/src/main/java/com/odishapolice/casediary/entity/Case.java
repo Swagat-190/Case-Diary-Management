@@ -32,6 +32,9 @@ public class Case {
     @JoinColumn(name = "investigation_officer_id")
     private User investigationOfficer;
 
+    @Column(name = "supervisor_id")
+    private Long supervisorId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private CaseStatus caseStatus = CaseStatus.OPEN;

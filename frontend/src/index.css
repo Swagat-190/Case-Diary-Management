@@ -1,12 +1,12 @@
 /* Global Styles for Case Diary System */
 
 :root {
-  --primary-gradient: linear-gradient(135deg, #C3B091 0%, #A8926A 100%);
-  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-  --success-color: #C3B091;
-  --danger-color: #ff6b6b;
-  --warning-color: #ffa502;
-  --box-shadow: 0 8px 32px 0 rgba(195, 176, 145, 0.18);
+  --primary-gradient: linear-gradient(135deg, #264653 0%, #2a9d8f 100%);
+  --secondary-gradient: linear-gradient(135deg, #e9c46a 0%, #f4a261 100%);
+  --success-color: #2a9d8f;
+  --danger-color: #d62828;
+  --warning-color: #f4a261;
+  --box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
   --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -21,11 +21,12 @@ html {
 }
 
 body {
-  font-family: 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Inter', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: linear-gradient(135deg, #fbf7f0 0%, #e8ddcf 100%);
+  background: linear-gradient(180deg, #f4f7fb 0%, #e9eef4 100%);
   min-height: 100vh;
+  color: #1f2937;
 }
 
 code {
@@ -151,13 +152,13 @@ code {
   border: none;
   color: white;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 12px;
   transition: var(--transition);
 }
 
 .button-gradient:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(195, 176, 145, 0.35);
+  box-shadow: 0 14px 35px rgba(15, 23, 42, 0.12);
 }
 
 .input-modern {

@@ -67,9 +67,14 @@ public class UserService {
 
         UserDTO savedUser = createUser(userDTO);
 
-        // Set firstLogin to true for new IO officers
+        // Set firstLogin to true and supervisorId for new IO officers
         User user = userRepository.findById(savedUser.getId()).orElseThrow();
         user.setFirstLogin(true);
+        
+        // Set the supervisor ID to the current supervisor's ID
+        User currentSupervisor = getCurrentUser();
+        user.setSupervisorId(currentSupervisor.getId());
+        
         userRepository.save(user);
 
         return new IoOfficerCreationResponse(savedUser, username, temporaryPassword);
@@ -128,7 +133,8 @@ public class UserService {
     }
 
     public List<UserDTO> getIoOfficers() {
-        return userRepository.findByRole(User.Role.IO).stream()
+        User currentSupervisor = getCurrentUser();
+        return userRepository.findBySupervisorId(currentSupervisor.getId()).stream()
                 .map(UserDTO::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -141,5 +147,15 @@ public class UserService {
 
     public Optional<UserDTO> getUserById(Long id) {
         return userRepository.findById(id).map(UserDTO::fromEntity);
+    }
+
+    private User getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getName() == null) {
+            throw new RuntimeException("User not authenticated");
+        }
+
+        return findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
     }
 }

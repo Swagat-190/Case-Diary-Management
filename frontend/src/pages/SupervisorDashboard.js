@@ -78,6 +78,7 @@ const SupervisorDashboard = () => {
     ]);
 
     const allCases = casesResponse.data || [];
+    const supervisorIoOfficers = ioResponse.data || [];
 
     setStats({
       openCases: allCases.filter(c => c.caseStatus === 'OPEN').length,
@@ -85,9 +86,9 @@ const SupervisorDashboard = () => {
       closedCases: allCases.filter(c => c.caseStatus === 'CLOSED').length
     });
 
-    setPendingCases(allCases.filter(c => c.investigationOfficer));
+    setPendingCases(allCases);
     setPendencyAlerts(alertsResponse.data);
-    setIoOfficers(ioResponse.data || []);
+    setIoOfficers(supervisorIoOfficers);
   };
 
   useEffect(() => {

@@ -23,4 +23,10 @@ public interface CaseRepository extends JpaRepository<Case, Long> {
 
     @Query("SELECT COUNT(c) FROM Case c WHERE c.caseStatus = 'CLOSED'")
     long countClosedCases();
+    
+    @Query("SELECT c FROM Case c WHERE c.investigationOfficer.supervisorId = :supervisorId")
+    List<Case> findCasesBySupervisor(@Param("supervisorId") Long supervisorId);
+    
+    @Query("SELECT c FROM Case c WHERE c.supervisorId = :supervisorId OR c.investigationOfficer.supervisorId = :supervisorId")
+    List<Case> findCasesByCreatorOrAssignedSupervisor(@Param("supervisorId") Long supervisorId);
 }

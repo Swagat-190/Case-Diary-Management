@@ -38,6 +38,8 @@ public class CaseService {
             throw new RuntimeException("FIR number already exists");
         }
 
+        User currentSupervisor = getCurrentUser();
+        
         Case caseEntity = new Case();
         caseEntity.setFirNumber(caseDTO.getFirNumber());
         caseEntity.setPoliceStation(caseDTO.getPoliceStation());
@@ -50,6 +52,7 @@ public class CaseService {
         caseEntity.setAccusedName(caseDTO.getAccusedName());
         caseEntity.setAccusedAddress(caseDTO.getAccusedAddress());
         caseEntity.setCrimeDescription(caseDTO.getCrimeDescription());
+        caseEntity.setSupervisorId(currentSupervisor.getId());
 
         if (caseDTO.getInvestigationOfficer() != null && caseDTO.getInvestigationOfficer().getId() != null) {
             User officer = userService.findByUsername(caseDTO.getInvestigationOfficer().getUsername())
@@ -139,7 +142,10 @@ public class CaseService {
         User currentUser = getCurrentUser();
 
         if (currentUser.getRole() == User.Role.SUPERVISOR) {
-            return getAllCases();
+            // Return cases created by this supervisor OR assigned to their IO officers
+            return caseRepository.findCasesByCreatorOrAssignedSupervisor(currentUser.getId()).stream()
+                    .map(CaseDTO::fromEntity)
+                    .collect(Collectors.toList());
         }
 
         if (currentUser.getRole() == User.Role.IO) {

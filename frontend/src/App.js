@@ -13,13 +13,110 @@ import Analytics from './pages/Analytics';
 
 const theme = createTheme({
   palette: {
+    mode: 'light',
     primary: {
-      main: '#C3B091',
+      main: '#264653',
+      contrastText: '#ffffff'
     },
     secondary: {
-      main: '#dc004e',
+      main: '#e9c46a',
+      contrastText: '#1f2937'
     },
+    error: {
+      main: '#d62828'
+    },
+    warning: {
+      main: '#f4a261'
+    },
+    info: {
+      main: '#2a9d8f'
+    },
+    background: {
+      default: '#f4f7fb',
+      paper: '#ffffff'
+    },
+    text: {
+      primary: '#1f2937',
+      secondary: '#4b5563'
+    }
   },
+  typography: {
+    fontFamily: ['Inter', 'Roboto', 'sans-serif'].join(','),
+    h1: { fontWeight: 700 },
+    h2: { fontWeight: 700 },
+    h3: { fontWeight: 700 },
+    h4: { fontWeight: 700 },
+    h5: { fontWeight: 700 },
+    h6: { fontWeight: 700 },
+    button: { textTransform: 'none', fontWeight: 700 }
+  },
+  shape: {
+    borderRadius: 14
+  },
+  components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          background: 'rgba(255,255,255,0.92)',
+          color: '#1f2937',
+          backdropFilter: 'blur(14px)',
+          boxShadow: '0 12px 30px rgba(15, 23, 42, 0.08)'
+        }
+      }
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: '18px',
+          boxShadow: '0 14px 35px rgba(15, 23, 42, 0.06)'
+        }
+      }
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          borderRadius: '18px',
+          boxShadow: '0 14px 35px rgba(15, 23, 42, 0.06)'
+        }
+      }
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: '12px'
+        },
+        contained: {
+          boxShadow: 'none'
+        }
+      }
+    },
+    MuiTextField: {
+      defaultProps: {
+        variant: 'outlined'
+      },
+      styleOverrides: {
+        root: {
+          backgroundColor: '#ffffff',
+          borderRadius: 12,
+          '& .MuiOutlinedInput-root': {
+            borderRadius: 12
+          }
+        }
+      }
+    },
+    MuiCssBaseline: {
+      styleOverrides: {
+        body: {
+          background: 'linear-gradient(180deg, #f4f7fb 0%, #e9eef4 100%)',
+          minHeight: '100vh',
+          color: '#1f2937'
+        },
+        '*, *::before, *::after': {
+          boxSizing: 'border-box'
+        }
+      }
+    }
+  }
 });
 
 // Protected Route Component

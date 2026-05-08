@@ -37,6 +37,9 @@ public class User {
     private String policeStation;
     private String designation;
 
+    @Column(name = "supervisor_id")
+    private Long supervisorId;
+
     @Column(updatable = false)
     private LocalDateTime createdAt;
 
